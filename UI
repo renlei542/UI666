@@ -1,0 +1,153 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "BackdoorExecutor"
+screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 400, 0, 250)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -125)
+mainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Size = UDim2.new(1, 0, 0, 30)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1, -60, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Backdoor Executor"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Font = Enum.Font.GothamBold
+title.TextSize = 14
+title.Parent = titleBar
+
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeButton.BorderSizePixel = 0
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 14
+closeButton.Parent = titleBar
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+local inputBox = Instance.new("TextBox")
+inputBox.Name = "InputBox"
+inputBox.Size = UDim2.new(1, -20, 1, -100)
+inputBox.Position = UDim2.new(0, 10, 0, 40)
+inputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+inputBox.BorderSizePixel = 0
+inputBox.Text = "require(76045212917837).china(\"username\")"
+inputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+inputBox.Font = Enum.Font.Code
+inputBox.TextSize = 12
+inputBox.TextWrapped = true
+inputBox.TextXAlignment = Enum.TextXAlignment.Left
+inputBox.TextYAlignment = Enum.TextYAlignment.Top
+inputBox.ClearTextOnFocus = false
+inputBox.MultiLine = true
+inputBox.Parent = mainFrame
+
+local buttonFrame = Instance.new("Frame")
+buttonFrame.Name = "ButtonFrame"
+buttonFrame.Size = UDim2.new(1, -20, 0, 40)
+buttonFrame.Position = UDim2.new(0, 10, 1, -50)
+buttonFrame.BackgroundTransparency = 1
+buttonFrame.Parent = mainFrame
+
+local executeButton = Instance.new("TextButton")
+executeButton.Name = "ExecuteButton"
+executeButton.Size = UDim2.new(0.5, -5, 1, 0)
+executeButton.Position = UDim2.new(0, 0, 0, 0)
+executeButton.BackgroundColor3 = Color3.fromRGB(60, 120, 60)
+executeButton.BorderSizePixel = 0
+executeButton.Text = "Execute"
+executeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+executeButton.Font = Enum.Font.GothamBold
+executeButton.TextSize = 14
+executeButton.Parent = buttonFrame
+
+local cleanButton = Instance.new("TextButton")
+cleanButton.Name = "CleanButton"
+cleanButton.Size = UDim2.new(0.5, -5, 1, 0)
+cleanButton.Position = UDim2.new(0.5, 5, 0, 0)
+cleanButton.BackgroundColor3 = Color3.fromRGB(120, 60, 60)
+cleanButton.BorderSizePixel = 0
+cleanButton.Text = "Clean"
+cleanButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+cleanButton.Font = Enum.Font.GothamBold
+cleanButton.TextSize = 14
+cleanButton.Parent = buttonFrame
+
+local statusMessage = Instance.new("TextLabel")
+statusMessage.Name = "StatusMessage"
+statusMessage.Size = UDim2.new(1, -20, 0, 20)
+statusMessage.Position = UDim2.new(0, 10, 1, -90)
+statusMessage.BackgroundTransparency = 1
+statusMessage.Text = ""
+statusMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusMessage.Font = Enum.Font.Gotham
+statusMessage.TextSize = 12
+statusMessage.TextXAlignment = Enum.TextXAlignment.Left
+statusMessage.Parent = mainFrame
+
+cleanButton.MouseButton1Click:Connect(function()
+    inputBox.Text = ""
+    statusMessage.Text = "Input cleared"
+    wait(2)
+    statusMessage.Text = ""
+end)
+
+executeButton.MouseButton1Click:Connect(function()
+    local code = inputBox.Text
+    if code == "" then
+        statusMessage.Text = "Please enter code to execute"
+        wait(2)
+        statusMessage.Text = ""
+        return
+    end
+    
+    local success, result = pcall(function()
+        local func, err = loadstring("return " .. code)
+        if not func then
+            func, err = loadstring(code)
+        end
+        
+        if func then
+            return func()
+        else
+            error(err)
+        end
+    end)
+    
+    if success then
+        statusMessage.Text = "Code executed successfully"
+    else
+        statusMessage.Text = "Error: " .. tostring(result)
+    end
+    
+    wait(2)
+    statusMessage.Text = ""
+end)
